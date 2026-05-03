@@ -25,9 +25,10 @@ public class LotteryService {
     public LotteryResult draw(String ip) {
         List<String> prizes = redisTemplate.opsForList().range(RedisInitializer.PRIZES_KEY, 0, -1);
         if (prizes == null || prizes.isEmpty()) {
-            return new LotteryResult(500, "错误", "奖项未配置，请联系管理员");
+            return new LotteryResult(-1, "错误", "奖项未配置，请联系管理员");
         }
 
+        // Each Redis entry has the format "prizeName|message"
         int index = ThreadLocalRandom.current().nextInt(prizes.size());
         String[] parts = prizes.get(index).split("\\|", 2);
         String prizeName = parts[0];

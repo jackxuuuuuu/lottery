@@ -12,9 +12,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class RedisInitializer implements ApplicationRunner {
 
-    static final String PRIZES_KEY = "lottery:prizes";
+    public static final String PRIZES_KEY = "lottery:prizes";
 
     private static final String[] DEFAULT_PRIZES = {
+        // Format: "prizeName|message"
         "一等奖|恭喜你抽中了一等奖！",
         "二等奖|恭喜你抽中了二等奖！",
         "三等奖|恭喜你抽中了三等奖！",
