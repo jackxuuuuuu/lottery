@@ -1,22 +1,42 @@
 package com.lottery.service;
 
+import com.lottery.config.RedisInitializer;
+import com.lottery.model.LotteryRecord;
 import com.lottery.model.LotteryResult;
+import com.lottery.repository.LotteryRecordRepository;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class LotteryService {
 
-    private static final String[][] PRIZES = {
-        {"一等奖", "恭喜你抽中了一等奖！"},
-        {"二等奖", "恭喜你抽中了二等奖！"},
-        {"三等奖", "恭喜你抽中了三等奖！"},
-        {"谢谢参与", "感谢参与，下次再来吧！"}
-    };
+    private final StringRedisTemplate redisTemplate;
+    private final LotteryRecordRepository recordRepository;
 
-    public LotteryResult draw() {
-        int index = ThreadLocalRandom.current().nextInt(PRIZES.length);
-        return new LotteryResult(0, PRIZES[index][0], PRIZES[index][1]);
+    public LotteryService(StringRedisTemplate redisTemplate,
+                          LotteryRecordRepository recordRepository) {
+        this.redisTemplate = redisTemplate;
+        this.recordRepository = recordRepository;
+    }
+
+    public LotteryResult draw(String ip) {
+        List<String> prizes = redisTemplate.opsForList().range(RedisInitializer.PRIZES_KEY, 0, -1);
+        if (prizes == null || prizes.isEmpty()) {
+            return new LotteryResult(-1, "错误", "奖项未配置，请联系管理员");
+        }
+
+        // Each Redis entry has the format "prizeName|message"
+        int index = ThreadLocalRandom.current().nextInt(prizes.size());
+        String[] parts = prizes.get(index).split("\\|", 2);
+        String prizeName = parts[0];
+        String message = parts.length > 1 ? parts[1] : "";
+
+        long now = System.currentTimeMillis();
+        recordRepository.save(new LotteryRecord(ip, prizeName, now));
+
+        return new LotteryResult(0, prizeName, message);
     }
 }
