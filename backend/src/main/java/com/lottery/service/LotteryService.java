@@ -1,6 +1,7 @@
 package com.lottery.service;
 
 import com.lottery.config.RedisInitializer;
+import com.lottery.model.ApiResponse;
 import com.lottery.model.LotteryRecord;
 import com.lottery.model.LotteryResult;
 import com.lottery.repository.LotteryRecordRepository;
@@ -22,10 +23,10 @@ public class LotteryService {
         this.recordRepository = recordRepository;
     }
 
-    public LotteryResult draw(String ip) {
+    public ApiResponse<LotteryResult> draw(String ip) {
         List<String> prizes = redisTemplate.opsForList().range(RedisInitializer.PRIZES_KEY, 0, -1);
         if (prizes == null || prizes.isEmpty()) {
-            return new LotteryResult(-1, "错误", "奖项未配置，请联系管理员");
+            return ApiResponse.error(-1, "奖项未配置，请联系管理员");
         }
 
         // Each Redis entry has the format "prizeName|message"
@@ -37,6 +38,6 @@ public class LotteryService {
         long now = System.currentTimeMillis();
         recordRepository.save(new LotteryRecord(ip, prizeName, now));
 
-        return new LotteryResult(0, prizeName, message);
+        return ApiResponse.success(new LotteryResult(prizeName, message));
     }
 }

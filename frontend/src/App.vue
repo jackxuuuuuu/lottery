@@ -21,7 +21,12 @@ async function draw() {
   loading.value = true
   try {
     const res = await fetch('/api/lottery/draw')
-    result.value = await res.json()
+    const json = await res.json()
+    if (json.code === 0) {
+      result.value = json.data
+    } else {
+      result.value = { prize: '错误', message: json.msg }
+    }
   } finally {
     loading.value = false
   }
