@@ -1,0 +1,44 @@
+# Maven / Java
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+*.zip
+*.tar.gz
+*.rar
+
+# Node / npm
+node_modules/
+dist/
+.npm
+
+# IDE – IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# IDE – VS Code
+.vscode/
+
+# IDE – Eclipse
+.classpath
+.project
+.settings/
+.factorypath
+
+# OS
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# Logs
+*.log
+logs/
+
+# Environment / secrets
+.env
+.env.*
+*.env
