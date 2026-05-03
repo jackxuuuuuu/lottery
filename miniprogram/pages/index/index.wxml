@@ -1,0 +1,22 @@
+<view class="container">
+  <view class="card">
+    <text class="title">在线抽奖</text>
+
+    <button
+      class="draw-btn"
+      bindtap="draw"
+      disabled="{{loading}}"
+    >
+      {{loading ? '抽奖中...' : '开始抽奖'}}
+    </button>
+
+    <view wx:if="{{result}}" class="result">
+      <text class="prize">{{result.prize}}</text>
+      <text class="message">{{result.message}}</text>
+    </view>
+
+    <view wx:if="{{errorMsg}}" class="error">
+      <text>{{errorMsg}}</text>
+    </view>
+  </view>
+</view>

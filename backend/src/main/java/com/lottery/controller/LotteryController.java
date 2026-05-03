@@ -1,5 +1,6 @@
 package com.lottery.controller;
 
+import com.lottery.model.ApiResponse;
 import com.lottery.model.LotteryResult;
 import com.lottery.service.LotteryService;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,7 +22,7 @@ public class LotteryController {
     }
 
     @GetMapping("/draw")
-    public LotteryResult draw(HttpServletRequest request) {
+    public ApiResponse<LotteryResult> draw(HttpServletRequest request) {
         String ip = resolveClientIp(request);
         return lotteryService.draw(ip);
     }
